@@ -5,9 +5,9 @@ name: chatbot
 # スケジュールの設定時刻はUTCとなる。
 # 例えばUTC時刻を22時とすると、日本時間（JST: Japan Standard Time）の場合は翌7時になる。
 on:
-  push:
-  #schedule:
-  #  - cron: '0 22 * * *'
+  #push:
+  schedule:
+    - cron: '0 22 * * *'
 
 jobs:
   build:
