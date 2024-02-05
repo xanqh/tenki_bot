@@ -16,17 +16,15 @@ with open("setting/settings.json", encoding="utf-8") as f:
     res = json.load(f)
 
 # チャネルアクセストークン
-CH_TOKEN = res["CH_TOKEN"]
-# userID
-USER_ID = res["USER_ID"]
+CH_TOKEN = os.environ['CH_TOKEN']
 # チャネルシークレット
-CH_SECRET = res["CH_SECRET"]
+CH_SECRET = os.environ['CH_SECRET']
 # 天気予報URL
 URL = "https://tenki.jp/forecast/5/26/5110/23100/"
 # 後ほどHerokuでPostgreSQLデータベースURLを取得
-DATABASE_URL = res["DB_URL"]
+DATABASE_URL = os.environ['DATABASE_URL']
 # 後ほど作成するHerokuアプリ名
-HEROKU_APP_NAME = res["HEROKU_NAME"]
+HEROKU_APP_NAME = os.environ['HEROKU_APP_NAME']
 
 app = Flask(__name__)
 Heroku = "https://{}.herokuapp.com/".format(HEROKU_APP_NAME)
