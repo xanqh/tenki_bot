@@ -11,10 +11,6 @@ from PIL import Image
 from flask import Flask, request, abort
 import os
 
-# 設定情報読み込み
-with open("setting/settings.json", encoding="utf-8") as f:
-    res = json.load(f)
-
 # チャネルアクセストークン
 CH_TOKEN = os.environ["CH_TOKEN"]
 # チャネルシークレット
