@@ -142,14 +142,6 @@ def handle_unfollow(event):
             cur.execute('DELETE FROM users WHERE user_id = %s', [event.source.user_id])
     print("userIdの削除OK!!")
 
-# データベースに登録されたLINEアカウントからランダムでひとりにプッシュ通知
-def push():
-    with get_connection() as conn:
-        with conn.cursor() as cur:
-            cur.execute('SELECT * FROM users ORDER BY random() LIMIT 1')
-            (to_user,) = cur.fetchone()
-    line_bot_api.multicast([to_user], TextSendMessage(text="今日もお疲れさん!!"))
-
 # アプリの起動
 if __name__ == "__main__":
     # 初回のみデータベースのテーブル作成
@@ -158,8 +150,6 @@ if __name__ == "__main__":
             conn.autocommit = True
             cur.execute('CREATE TABLE IF NOT EXISTS users(user_id TEXT)')
 
-    # LINE botをフォローしているアカウントのうちランダムで一人にプッシュ通知
-    push()
     port = int(os.getenv("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
 ### End
