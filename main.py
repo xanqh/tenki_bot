@@ -178,7 +178,7 @@ def handle_message(event):
     #入力された文字を取得
     text_in = event.message.text
 
-    if "天気" or "予報" in text_in:   #scw.pyのgetw関数を呼び出している
+    if "天気" in text_in or "予報" in text_in:   #scw.pyのgetw関数を呼び出している
         # 天気予報ページ情報取得
         soup = get_page_info()
 
