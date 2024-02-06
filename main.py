@@ -194,7 +194,7 @@ def handle_message(event):
         msg = create_msg(weather_title, weather_list)
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=msg))
     else:   #「天気」以外の文字の場合
-     line_bot_api.reply_message(event.reply_token, "天気予報以外は答えられません😭")
+        line_bot_api.reply_message(event.reply_token, "天気予報以外は答えられません😭")
 
 if __name__=="__main__":
     port=int(os.getenv("PORT",5000))
