@@ -178,7 +178,7 @@ def handle_message(event):
     #入力された文字を取得
     text_in = event.message.text
 
-    if "天気" in text_in:   #scw.pyのgetw関数を呼び出している
+    if "天気" or "予報" in text_in:   #scw.pyのgetw関数を呼び出している
         # 天気予報ページ情報取得
         soup = get_page_info()
 
@@ -192,9 +192,9 @@ def handle_message(event):
 
         # LINE BOTメッセージ
         msg = create_msg(weather_title, weather_list)
-        line_bot_api.reply_message(event.reply_token,TextSendMessage(text=msg))
-    else:   #「今日」「明日」以外の文字はオウム返しする
-     line_bot_api.reply_message(event.reply_token,TextSendMessage(text=event.message.text))
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=msg))
+    else:   #「天気」以外の文字の場合
+     line_bot_api.reply_message(event.reply_token, "天気予報以外は答えられません😭")
 
 if __name__=="__main__":
     port=int(os.getenv("PORT",5000))
