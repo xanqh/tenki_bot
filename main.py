@@ -193,9 +193,6 @@ def handle_message(event):
         # LINE BOTメッセージ
         msg = create_msg(weather_title, weather_list)
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=msg))
-    elif event.message.type == "sticker":
-        # アプリ内のスタンプが送信された場合の処理
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text="天気予報以外は答えられません😭"))
     else:   #「天気」以外の文字の場合
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text="天気予報以外は答えられません😭"))
 
