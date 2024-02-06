@@ -186,6 +186,9 @@ def handle_message(event):
     #入力された文字を取得
     text_in = event.message.text
 
+    # デバッグログ
+    print(f"Received message: {text_in}")
+
     # 登録処理
     if any(city in text_in for city in CITY_WEATHER_URLS):
         for city, url in CITY_WEATHER_URLS.items():
