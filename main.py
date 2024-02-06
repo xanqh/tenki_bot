@@ -16,7 +16,12 @@ CH_TOKEN = os.environ["CH_TOKEN"]
 # チャネルシークレット
 CH_SECRET = os.environ["CH_SECRET"]
 # 天気予報URL
-URL = "https://tenki.jp/forecast/5/26/5110/23100/"
+CITY_WEATHER_URLS = {
+    "大阪": "https://tenki.jp/forecast/6/29/4710/27100/",
+    "東京": "https://tenki.jp/forecast/3/16/4410/13101/",
+    "名古屋": "https://tenki.jp/forecast/5/26/5110/23100/",
+    # 他の地域も必要に応じて追加
+}
 # 後ほどHerokuでPostgreSQLデータベースURLを取得
 DATABASE_URL = os.environ["DATABASE_URL"]
 # 後ほど作成するHerokuアプリ名
@@ -83,9 +88,12 @@ def handle_unfollow(event):
             cur.execute('DELETE FROM users WHERE user_id = %s', [event.source.user_id])
     print("userIdの削除OK!!")
 
-def get_page_info():
+def get_page_info(city):
     """ 読み込みページ情報取得(URLにリクエストしてBeautifulSoupで整形) """
-    res = requests.get(URL)
+    url = CITY_WEATHER_URLS.get(city)
+    if not url:
+        return None  # 対応するURLがない場合はNoneを返すなどの対応が必要
+    res = requests.get(url)
     html = res.text.encode(res.encoding)
     soup = BeautifulSoup(html, 'lxml')
 
@@ -148,9 +156,9 @@ def create_msg(weather_title, weather_list):
     # BOTメッセージフォーマット
     msg_format = """
         {0}
-        天気                     ： {1}
-        最高気温(℃)              ： {2}
-        最低気温(℃)              ： {3}
+        天気                   ： {1}
+        最高気温(℃)             ： {2}
+        最低気温(℃)             ： {3}
         降水確率[0~6時]       ： {4}
         降水確率[6~12時]     ： {5}
         降水確率[12~18時]   ： {6}
@@ -178,23 +186,47 @@ def handle_message(event):
     #入力された文字を取得
     text_in = event.message.text
 
-    if "天気" in text_in or "予報" in text_in:   #scw.pyのgetw関数を呼び出している
-        # 天気予報ページ情報取得
-        soup = get_page_info()
+    # 登録処理
+    if any(city in text_in for city in CITY_WEATHER_URLS):
+        for city, url in CITY_WEATHER_URLS.items():
+            if city in text_in:
+                profile = line_bot_api.get_profile(event.source.user_id)
+                with get_connection() as conn:
+                    with conn.cursor() as cur:
+                        conn.autocommit = True
+                        cur.execute('CREATE TABLE IF NOT EXISTS users(user_id TEXT, city TEXT)')
+                        cur.execute('INSERT INTO users (user_id, city) VALUES (%s, %s) ON CONFLICT (user_id) DO UPDATE SET city = EXCLUDED.city', [profile.user_id, city])
+                        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=f"{city}を登録しました！"))
+                break
 
-        # ページタイトル
-        page_title = soup.title.text
-        m = re.search(".*天気", page_title)
-        weather_title = m.group(0) # 名古屋市の今日明日の天気
+    # 天気予報取得処理
+    elif "天気" in text_in or "予報" in text_in:
+        with get_connection() as conn:
+            with conn.cursor() as cur:
+                cur.execute('SELECT city FROM users WHERE user_id = %s', [event.source.user_id])
+                city = cur.fetchone()
+                if city:
+                    city = city[0]
+                    soup = get_page_info(city)
+                    if soup:
+                        # ページタイトル
+                        page_title = soup.title.text
+                        m = re.search(".*天気", page_title)
+                        weather_title = m.group(0)
+                        # 今日明日の天気予報情報
+                        weather_list = get_weather_info(soup)
+                        # LINE BOTメッセージ
+                        msg = create_msg(weather_title, weather_list)
+                        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=msg))
+                    else:
+                        line_bot_api.reply_message(event.reply_token, TextSendMessage(text="天気情報の取得に失敗しました。"))
+                else:
+                    line_bot_api.reply_message(event.reply_token, TextSendMessage(text="まずは「大阪市 登録」などで地域を登録してください。"))
 
-        # 今日明日の天気予報情報
-        weather_list = get_weather_info(soup)
-
-        # LINE BOTメッセージ
-        msg = create_msg(weather_title, weather_list)
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=msg))
-    else:   #「天気」以外の文字の場合
+    # それ以外の場合
+    else:
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text="天気予報以外は答えられません😭"))
+
 
 if __name__=="__main__":
     port=int(os.getenv("PORT",5000))
