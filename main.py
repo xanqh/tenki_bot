@@ -197,7 +197,8 @@ def handle_message(event):
                 with get_connection() as conn:
                     with conn.cursor() as cur:
                         conn.autocommit = True
-                        cur.execute('CREATE TABLE IF NOT EXISTS users(user_id TEXT, city TEXT)')
+                        # ユーザーが異なる都市を持つためのテーブル作成
+                        cur.execute('CREATE TABLE IF NOT EXISTS users(user_id TEXT PRIMARY KEY, city TEXT)')
                         cur.execute('INSERT INTO users (user_id, city) VALUES (%s, %s) ON CONFLICT (user_id) DO UPDATE SET city = EXCLUDED.city', [profile.user_id, city])
                         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=f"{city}を登録しました！"))
                 break
