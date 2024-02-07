@@ -20,11 +20,11 @@ CITY_WEATHER_URLS = {
     "大阪": "https://tenki.jp/forecast/6/30/6200/27100/",
     "東京": "https://tenki.jp/forecast/3/16/4410/13101/",
     "名古屋": "https://tenki.jp/forecast/5/26/5110/23100/",
-    "仙台市": "https://tenki.jp/forecast/2/7/3410/4100/",
-    "福岡市": "https://tenki.jp/forecast/9/43/8210/40130/",
-    "札幌市": "https://tenki.jp/forecast/1/2/1400/1100/",
-    "那覇市": "https://tenki.jp/forecast/10/50/9110/47201/",
-    "高知市": "https://tenki.jp/forecast/8/42/7410/39201/"
+    "仙台": "https://tenki.jp/forecast/2/7/3410/4100/",
+    "福岡": "https://tenki.jp/forecast/9/43/8210/40130/",
+    "札幌": "https://tenki.jp/forecast/1/2/1400/1100/",
+    "那覇": "https://tenki.jp/forecast/10/50/9110/47201/",
+    "高知": "https://tenki.jp/forecast/8/42/7410/39201/"
     # 他の地域も必要に応じて追加
 }
 # 後ほどHerokuでPostgreSQLデータベースURLを取得
