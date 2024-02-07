@@ -242,14 +242,13 @@ def handle_message(event):
     # 使い方
     elif text_in == "使い方":
         # 使い方の説明メッセージを表示
-        usage_msg = """
-        使い方
-        1. 登録したい地域を送信
-        2. 天気を含む文章を送信
-        3. 登録した地域の天気予報が送信される
-
-        登録できる地域は「地域一覧」と送信できます
-        """
+        usage_msg = (
+            "使い方\n"
+            "1. 登録したい地域を送信\n"
+            "2. 天気を含む文章を送信\n"
+            "3. 登録した地域の天気予報が送信される\n\n"
+            "登録できる地域は「地域一覧」と送信できます"
+        )
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=usage_msg))
 
     # それ以外の場合
