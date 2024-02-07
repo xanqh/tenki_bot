@@ -215,7 +215,9 @@ def handle_message(event):
                     if soup:
                         # ページタイトル
                         page_title = soup.title.text
+                        print(page_title)
                         m = re.search(".*天気", page_title)
+                        print(m)
                         weather_title = m.group(0)
                         # 今日明日の天気予報情報
                         weather_list = get_weather_info(soup)
