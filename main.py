@@ -17,9 +17,14 @@ CH_TOKEN = os.environ["CH_TOKEN"]
 CH_SECRET = os.environ["CH_SECRET"]
 # 天気予報URL
 CITY_WEATHER_URLS = {
-    "大阪": "https://tenki.jp/forecast/6/29/4710/27100/",
+    "大阪": "https://tenki.jp/forecast/6/30/6200/27100/",
     "東京": "https://tenki.jp/forecast/3/16/4410/13101/",
     "名古屋": "https://tenki.jp/forecast/5/26/5110/23100/",
+    "仙台市": "https://tenki.jp/forecast/2/7/3410/4100/",
+    "福岡市": "https://tenki.jp/forecast/9/43/8210/40130/",
+    "札幌市": "https://tenki.jp/forecast/1/2/1400/1100/",
+    "那覇市": "https://tenki.jp/forecast/10/50/9110/47201/",
+    "高知市": "https://tenki.jp/forecast/8/42/7410/39201/"
     # 他の地域も必要に応じて追加
 }
 # 後ほどHerokuでPostgreSQLデータベースURLを取得
@@ -215,9 +220,7 @@ def handle_message(event):
                     if soup:
                         # ページタイトル
                         page_title = soup.title.text
-                        print(page_title)
                         m = re.search(".*天気", page_title)
-                        print(m)
                         weather_title = m.group(0)
                         # 今日明日の天気予報情報
                         weather_list = get_weather_info(soup)
@@ -228,6 +231,13 @@ def handle_message(event):
                         line_bot_api.reply_message(event.reply_token, TextSendMessage(text="天気情報の取得に失敗しました。"))
                 else:
                     line_bot_api.reply_message(event.reply_token, TextSendMessage(text="まずは「大阪市 登録」などで地域を登録してください。"))
+
+    # 地域一覧取得
+    elif text_in == "地域一覧":
+        # 登録できる地域の一覧を表示
+        cities_list = "\n".join(CITY_WEATHER_URLS.keys())
+        reply_msg = f"登録できる地域の一覧:\n{cities_list}"
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply_msg))
 
     # それ以外の場合
     else:
