@@ -239,6 +239,13 @@ def handle_message(event):
         reply_msg = f"登録できる地域の一覧:\n{cities_list}"
         line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply_msg))
 
+    # 地域登録
+    elif text_in == "地域登録":
+        # 登録できる地域の一覧を表示
+        cities_list = "\n".join(CITY_WEATHER_URLS.keys())
+        reply_msg = f"登録できる地域の一覧:\n{cities_list}\n\nこちらから選択してメッセージでお送りください！"
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply_msg))
+
     # 使い方
     elif text_in == "使い方":
         # 使い方の説明メッセージを表示
